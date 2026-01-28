@@ -1,2 +1,224 @@
+<<<<<<< HEAD
+=======
+# 🔵 Ops Team Access Scenario – IAM Permissions
 
+---
 
+## ⚫ Scenario Overview
+
+We have an **Ops team** with **10 members**.  
+All team members are mapped to the **same permission group**, which provides:
+
+- Full access to **EC2**
+- Full access to **S3**
+
+Recently, a new team member named **Sunil** joined the Ops team.
+
+- Sunil is **very experienced with EC2**
+- He has **no experience with S3**
+- He is a **contract employee**
+
+Our **S3 buckets contain confidential customer data**.  
+For security reasons, we **do not want Sunil to have access to S3**, even though he is part of the Ops team.
+
+---
+
+## 🟢 Requirement
+
+**Sunil should have:**
+- ✅ EC2 access  
+- ❌ No S3 access  
+
+Even though the Ops team has permissions for both **EC2 and S3**.
+
+---
+
+## 🔵 Question
+
+**Is it possible to remove or restrict S3 access for Sunil only, while keeping EC2 access, even though he is part of the Ops team?**
+
+---
+
+## 🟢 Answer & Key Concept
+
+Yes, it **is possible**.
+
+When we check **AWS managed policies**, there is **no default policy to deny S3 access**.  
+AWS does **not provide an S3 deny managed policy**, so we must create a **custom IAM policy** to explicitly deny S3 access.
+
+---
+
+## 🔵 Creating an S3 Deny Policy (IAM)
+
+### ⚫ Steps / Procedure
+
+1. Go to **AWS IAM → Policies**
+2. Click **Create policy**
+3. Choose **Service**: `S3`
+4. Under **Effect**, select **Deny**
+5. In **Actions**:
+   - Choose **Manual actions**
+   - Select **All S3 actions**
+6. In **Resources**, select **All resources**
+7. Click **Next**
+8. **Policy Name**: `S3-deny`
+9. **Description**: This policy will deny all S3 operations
+10. Click **Create policy**
+
+---
+
+## 🟢 Important Note
+
+Creating a policy **does not automatically attach it** to any user, group, or role.
+
+---
+
+## ⚫ Attaching the Policy to Sunil
+
+1. Go to **IAM → Users**
+2. Select **Sunil**
+3. Click **Add permissions**
+4. Choose **Attach policies directly**
+5. Search for **S3-deny**
+6. Attach the policy
+
+---
+
+## 🟢 IAM Rule / Concept (Very Important)
+
+> **Deny always has the highest priority**
+
+If a user or group has **both Allow and Deny permissions** for a service  
+(S3, EC2, VPC, RDS, IAM, etc.):
+
+- ✅ **Deny overrides all Allow permissions**
+- Even if Allow is granted at:
+  - Group level
+  - User level
+  - Administrator level
+
+Once **Deny** is applied, access is blocked.
+
+---
+
+## 🔵 Use Case
+
+### ⚫ Example Scenario
+
+Sometimes we may receive a ticket like:
+>>>>>>> 8793831 (updated aws note)
+
+> *“I have full access to an S3 bucket, but I am not able to upload an object.”*
+
+<<<<<<< HEAD
+=======
+In this case, we must check whether a **Deny policy** is attached to the user.
+
+---
+
+## ⚫ Verification Steps
+
+- Open the **Sunil user**
+- Check permissions:
+  - EC2 + S3 full access (from group)
+  - `S3-deny` policy (attached directly)
+- Because of the **S3-deny policy**, Sunil **cannot access S3**
+- The deny policy is attached **at the user level**, not the group level
+- Login using Sunil’s credentials in another browser
+- Try accessing S3 → ❌ **Access denied**
+
+---
+
+## 🟢 Final Conclusion (Sunil Case)
+
+- **Deny has the highest priority**
+- Even if **Administrator access** is granted, Sunil **still cannot access S3**
+
+---
+
+---
+
+# 🔵 Restricting S3 Access for Krishna User
+
+---
+
+## ⚫ Scenario
+
+- Login to **Krishna user**
+- Krishna is from the **DevOps team**
+- He currently has **Administrator access**
+- Check whether he can access **S3**
+
+Krishna joined recently as a **fresher**.  
+Our S3 buckets contain **confidential customer data**, so we must **restrict his S3 access**.
+
+---
+
+## 🟢 Key Question & Answer
+
+**Question:** Is it possible to restrict Krishna’s access to S3?  
+**Answer:** Yes, it is possible.
+
+---
+
+## ⚫ Solution Steps
+
+- We already have the **S3-deny policy**
+- Go to **IAM → Users → Krishna**
+- Click **Add permissions**
+- Choose **Attach policies directly**
+- Attach the **S3-deny** policy
+- Check S3 access again
+
+➡️ Krishna **will not be able to access S3**
+
+---
+
+## 🟢 Important Observation / Security Note
+
+- Krishna needed temporary S3 access for a ticket
+- Because he had **Admin access**, he:
+  - Removed the `S3-deny` policy
+  - Completed the work
+  - Re-attached the policy
+
+⚠️ This activity will appear in **audit trail (CloudTrail) logs**  
+Even though it is logged, it still represents a **security risk**
+
+---
+
+## 🔵 Lesson / Best Practice
+
+### 🟦 Best Practice
+
+- Avoid giving **Administrator access**
+- Always follow the **Principle of Least Privilege**
+- Grant only the permissions required to perform the task
+
+---
+
+## ⚫ Restricting IAM Access for Krishna
+
+### Steps
+
+1. Go to **IAM → Policies → Create policy**
+2. Choose **Service**: IAM
+3. **Effect**: Deny
+4. **Manual actions**: Select All
+5. **Resources**: All
+6. Click **Next**
+7. **Policy Name**: `IAM-deny`
+8. **Description**: (Optional)
+9. Attach this policy to **Krishna**
+10. Login as Krishna and verify access
+
+➡️ Once we create a policy, we can use it for n number of users, groups, and roles.**
+
+---
+
+## 🟢 Closing Note
+
+- There will be different use cases, and we need to check permissions based on requirements each time.
+- Always review and validate permissions **based on business requirements**
+
+>>>>>>> 8793831 (updated aws note)
