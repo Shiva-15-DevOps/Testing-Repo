@@ -221,4 +221,3 @@ Even though it is logged, it still represents a **security risk**
 - There will be different use cases, and we need to check permissions based on requirements each time.
 - Always review and validate permissions **based on business requirements**
 
->>>>>>> 8793831 (updated aws note)
