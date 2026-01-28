@@ -1,0 +1,74 @@
+(Write the heading in BLUE pen)
+Ops Team Access Scenario – IAM Permissions
+________________________________________
+(Write the main content in BLACK pen)
+We have an Ops team with 10 members. All team members are mapped to the same permission group, which provides full access to EC2 and S3.
+Recently, a new team member named Sunil joined the Ops team. He is very experienced with EC2, but he does not have experience with S3. Also, Sunil is a contract employee.
+Our S3 buckets contain many objects, including confidential information. For security reasons, we do not want Sunil to have access to S3, even though he is mapped to the Ops team.
+________________________________________
+(Write this important point in GREEN pen)
+Requirement:
+Sunil should have only EC2 access and no S3 access, even though the Ops team has permissions for both EC2 and S3.
+________________________________________
+(Write the question in LIGHT BLUE pen)
+Question:
+Is it possible to remove or restrict S3 access for Sunil only, while keeping EC2 access, even though he is part of the Ops team?
+
+Use the GREEN pen ✍️
+When we check AWS managed policies, there is no policy available to deny S3 access. AWS does not provide a default S3 deny policy, so we need to create a separate custom policy to deny S3 access.
+
+(BLUE pen – Heading / Topic)
+➤ In AWS IAM, go to Policies.
+________________________________________
+(BLACK pen – Steps / Procedure)
+➤ Click on Create policy.
+➤ Choose a service (search for S3).
+➤ Under Effect, select Deny.
+➤ In Actions, choose Manual actions and select All S3 actions.
+➤ In Resources, select All resources.
+➤ Click Next.
+➤ Policy Name: S3-deny
+➤ Description: This policy will deny all S3 operations.
+➤ Click Create policy.
+________________________________________
+(GREEN pen – Important Note)
+Even after creating the policy, it will not be automatically attached to any user or group.
+________________________________________
+(BLACK pen – Steps Continued)
+➤ Attach the policy to the Sunil user.
+➤ Go to Users.
+➤ Click Add permissions → Attach policies directly.
+➤ Search for S3-deny.
+➤ Add the permission.
+________________________________________
+(GREEN pen – Concept / Rule)
+****
+For a user or group, if a service has both Allow and Deny permissions
+(for example: S3, EC2, VPC, RDS, IAM, or any other service),
+➤ Deny has the highest priority.
+Even if a user has multiple Allow permissions at the group level or user level, once a Deny permission is applied, all Allow permissions will be overridden.
+________________________________________
+(BLUE pen – Use Case Heading)
+Use case:
+________________________________________
+(BLACK pen – Explanation)
+Sometimes we may receive a ticket like:
+“I have full access to an S3 bucket, but I am not able to upload an object.”
+In this case, we need to check whether any Deny permission is assigned to that user.
+________________________________________
+(BLACK pen – Verification Steps)
+➤ Open the Sunil user and check the permissions.
+➤ He has EC2-S3 full access and S3-deny permissions.
+➤ Because of the S3-deny policy, he cannot access S3.
+➤ The S3-deny policy is attached directly at the user level, not at the group level.
+➤ Try to access S3 by logging in with Sunil’s credentials in another browser.
+He will not be able to access S3.
+________________________________________
+(GREEN pen – Final Conclusion)
+➤ Deny has the highest priority compared to Allow.
+➤ Even if we give Administrator access, Sunil still cannot access S3.
+
+
+
+ 
+
