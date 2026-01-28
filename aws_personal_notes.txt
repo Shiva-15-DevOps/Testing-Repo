@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
 # 🔵 Ops Team Access Scenario – IAM Permissions
 
----
 
 ## ⚫ Scenario Overview
 
